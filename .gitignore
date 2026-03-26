@@ -137,3 +137,19 @@ dist
 # Vite logs files
 vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
+
+# --- Selenium & Drivers ---
+chromedriver
+chromedriver.exe
+geckodriver
+IEDriverServer.exe
+setup.log
+selenium-debug.log
+
+# --- Visual Studio Code Settings ---
+.vscode/
+*.code-workspace
+
+# --- Build Folders ---
+dist/
+build/
