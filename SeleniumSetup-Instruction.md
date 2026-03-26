@@ -1,25 +1,25 @@
 # How To Set Up Mern Ecommerce Website For Selenium Testing
 
-# Prerequisites:
+## Prerequisites:
 - Node.js (v21.1.0 or later)
 - MongoDB installed and running locally
 - Nodemon installed globally
 
-MongoDB Installation:
+### MongoDB Installation:
 - download MongoDB Community Server at https://www.mongodb.com/try/download/community
 - download MongoDB Compass at https://www.mongodb.com/try/download/compass
 - (optional) download MongoDB Shell at https://www.mongodb.com/try/download/shell
 
-# MongoDB Compass Setup:
+### MongoDB Compass Setup:
 - create a database and create a new collection
 - copy the connection string for the backend
-# MongoDB Shell Setup (If downloaded):
+### MongoDB Shell Setup (If downloaded):
 - navigate to the bin folder of MongoDB (eg. C:\Program Files\MongoDB\Server\8.2\bin) in file explorer and copy the directory
 - search editing the environment variables and click environment variables
 - click the path variable and click edit
 - click new and past the directory, after click ok
 
-# Mern Ecommerce Website Setup:
+## Mern Ecommerce Website Setup:
 - clone the GitHub repository: https://github.com/je1ii/Selenium-MernEcommerce.git
 - follow the readMe file in the GitHub clone
 - install dependencies for frontend and backend separately
@@ -35,7 +35,7 @@ npm install --legacy-peer-deps
 - import mern.users in users collections
 
 
-# IF RUNNING THE WEBSITE HAVE VERSION CONFLICTS:
+## IF RUNNING THE WEBSITE HAVE VERSION CONFLICTS:
 
 ### For frontend:
 - delete the folder node-modules and file package-lock.json
