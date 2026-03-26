@@ -56,7 +56,10 @@ export const Cart = ({checkout}) => {
             <Stack rowGap={2}>
             {
                 items && items.map((item)=>(
-                    <CartItem key={item._id} id={item._id} title={item.product.title} brand={item.product.brand.name} category={item.product.category.name} price={item.product.price} quantity={item.quantity} thumbnail={item.product.thumbnail} stockQuantity={item.product.stockQuantity} productId={item.product._id}/>
+                    <div key={item._id} data-testid="cart-item">
+                        <CartItem id={item._id} title={item.product.title} brand={item.product.brand.name} category={item.product.category.name} price={item.product.price} quantity={item.quantity} thumbnail={item.product.thumbnail} stockQuantity={item.product.stockQuantity} productId={item.product._id}/>
+                    </div>
+                    
                 ))
             }
             </Stack>

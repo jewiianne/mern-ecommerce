@@ -109,7 +109,7 @@ export const Navbar=({isProductList=false})=> {
             {
             cartItems?.length>0 && 
             <Badge  badgeContent={cartItems.length} color='error'>
-              <IconButton onClick={()=>navigate("/cart")}>
+              <IconButton data-testid="cart-button" onClick={()=>navigate("/cart")}>
                 <ShoppingCartOutlinedIcon />
                 </IconButton>
             </Badge>
@@ -124,7 +124,7 @@ export const Navbar=({isProductList=false})=> {
                   </Stack>
             }
             {
-              isProductList && <IconButton onClick={handleToggleFilters}><TuneIcon sx={{color:isProductFilterOpen?"black":""}}/></IconButton>
+              isProductList && <IconButton data-testid="filter-toggle-button" onClick={handleToggleFilters}><TuneIcon sx={{color:isProductFilterOpen?"black":""}}/></IconButton>
             }
             
             </Stack>

@@ -1,4 +1,10 @@
 {
+  "dependencies": {
+    "selenium-webdriver": "^4.41.0"
+  }
+}
+
+{
   "name": "selenium-testing",
   "version": "1.0.0",
   "main": "index.js",
