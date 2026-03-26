@@ -49,9 +49,9 @@ export const CartItem = ({id,thumbnail,title,category,brand,price,quantity,stock
                 <Typography variant='body2' color={'text.secondary'}>{brand}</Typography>
                 <Typography mt={1}>Quantity</Typography>
                 <Stack flexDirection={'row'} alignItems={'center'}>
-                    <IconButton onClick={handleRemoveQty}><RemoveIcon fontSize='small'/></IconButton>
+                    <IconButton data-testid="subtract-quantity" onClick={handleRemoveQty}><RemoveIcon fontSize='small'/></IconButton>
                     <Typography>{quantity}</Typography>
-                    <IconButton onClick={handleAddQty}><AddIcon fontSize='small'/></IconButton>
+                    <IconButton data-testid="add-quantity" onClick={handleAddQty}><AddIcon fontSize='small'/></IconButton>
                 </Stack>
             </Stack>
         </Stack>
@@ -59,7 +59,7 @@ export const CartItem = ({id,thumbnail,title,category,brand,price,quantity,stock
         {/* price and remove button */}
         <Stack justifyContent={'space-evenly'} alignSelf={is552?'flex-end':''} height={'100%'} rowGap={'1rem'} alignItems={'flex-end'}>
             <Typography variant='body2'>${price}</Typography>
-            <Button size={is480?"small":""} onClick={handleProductRemove} variant='contained'>Remove</Button>
+            <Button data-testid="remove-button" size={is480?"small":""} onClick={handleProductRemove} variant='contained'>Remove</Button>
         </Stack>
     </Stack>
   )

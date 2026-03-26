@@ -234,7 +234,7 @@ exports.resetPassword=async(req,res)=>{
 
 exports.logout=async(req,res)=>{
     try {
-        res.cookie('token',{
+        res.clearCookie('token',{
             maxAge:0,
             sameSite:process.env.PRODUCTION==='true'?"None":'Lax',
             httpOnly:true,

@@ -90,7 +90,7 @@ export const Navbar=({isProductList=false})=> {
               {
                 loggedInUser?.isAdmin && 
               
-                <MenuItem  onClick={handleCloseUserMenu}>
+                <MenuItem data-testid="add-new-product" onClick={handleCloseUserMenu}>
                   <Typography component={Link} color={'text.primary'} sx={{textDecoration:"none"}} to="/admin/add-product" textAlign="center">Add new Product</Typography>
                 </MenuItem>
               
@@ -109,7 +109,7 @@ export const Navbar=({isProductList=false})=> {
             {
             cartItems?.length>0 && 
             <Badge  badgeContent={cartItems.length} color='error'>
-              <IconButton onClick={()=>navigate("/cart")}>
+              <IconButton data-testid="cart-button" onClick={()=>navigate("/cart")}>
                 <ShoppingCartOutlinedIcon />
                 </IconButton>
             </Badge>
@@ -124,7 +124,7 @@ export const Navbar=({isProductList=false})=> {
                   </Stack>
             }
             {
-              isProductList && <IconButton onClick={handleToggleFilters}><TuneIcon sx={{color:isProductFilterOpen?"black":""}}/></IconButton>
+              isProductList && <IconButton data-testid="filter-toggle-button" onClick={handleToggleFilters}><TuneIcon sx={{color:isProductFilterOpen?"black":""}}/></IconButton>
             }
             
             </Stack>

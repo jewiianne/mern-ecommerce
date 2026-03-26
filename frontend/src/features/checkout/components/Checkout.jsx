@@ -77,37 +77,98 @@ export const Checkout = () => {
             <Stack component={'form'} noValidate rowGap={2} onSubmit={handleSubmit(handleAddAddress)}>
                     <Stack>
                         <Typography  gutterBottom>Type</Typography>
-                        <TextField placeholder='Eg. Home, Buisness' {...register("type",{required:true})}/>
+                        <TextField 
+                            placeholder='Eg. Home, Business' 
+                            {...register("type", {
+                                required: "Type is required",
+                                minLength: { value: 3, message: "Type must be at least 3 characters" }
+                            })}
+                            error={!!errors.type}
+                            helperText={errors.type?.message}
+                        />
                     </Stack>
 
 
                     <Stack>
                         <Typography gutterBottom>Street</Typography>
-                        <TextField {...register("street",{required:true})}/>
+                        <TextField 
+                            {...register("street", {
+                                required: "Street address is required",
+                                minLength: { value: 5, message: "Please enter a valid street name (min 5 chars)" },
+                                maxLength: { value: 100, message: "Street name is too long" }
+                            })}
+                            error={!!errors.street}
+                            helperText={errors.street?.message}
+                        />
                     </Stack>
 
                     <Stack>
                         <Typography gutterBottom>Country</Typography>
-                        <TextField {...register("country",{required:true})}/>
+                        <TextField 
+                            {...register("country", {
+                                required: "Country is required",
+                                minLength: { value: 4, message: "Invalid country name" },
+                            })}
+                            error={!!errors.country}
+                            helperText={errors.country?.message}
+                        />
                     </Stack>
 
                     <Stack>
                         <Typography  gutterBottom>Phone Number</Typography>
-                        <TextField type='number' {...register("phoneNumber",{required:true})}/>
+                        <TextField 
+                            type='number' 
+                            {...register("phoneNumber", {
+                                required: "Phone number is required",
+                                pattern: {
+                                    value: /^(09|\+639)\d{9}$/,
+                                    message: "Invalid phone number format"
+                                }
+                            })}
+                            error={!!errors.phoneNumber}
+                            helperText={errors.phoneNumber?.message}
+                        />
                     </Stack>
 
                     <Stack flexDirection={'row'}>
                         <Stack width={'100%'}>
                             <Typography gutterBottom>City</Typography>
-                            <TextField  {...register("city",{required:true})}/>
+                            <TextField 
+                                {...register("city", {
+                                    required: "City is required",
+                                    minLength: { value: 3, message: "City name is too short" },
+                                    pattern: {
+                                        value: /^[a-zA-Z\s]*$/,
+                                        message: "City should only contain letters"
+                                    }
+                                })}
+                                error={!!errors.city}
+                                helperText={errors.city?.message}
+                            />
                         </Stack>
                         <Stack width={'100%'}>
                             <Typography gutterBottom>State</Typography>
-                            <TextField  {...register("state",{required:true})}/>
+                            <TextField 
+                                {...register("state", {
+                                    required: "State/Province is required",
+                                    minLength: { value: 3, message: "State name is too short" }
+                                })}
+                                error={!!errors.state}
+                                helperText={errors.state?.message}
+                            />
                         </Stack>
                         <Stack width={'100%'}>
                             <Typography gutterBottom>Postal Code</Typography>
-                            <TextField type='number' {...register("postalCode",{required:true})}/>
+                            <TextField 
+                                type='number' 
+                                {...register("postalCode", {
+                                    required: "Postal code is required",
+                                    minLength: { value: 4, message: "Postal code is too short" },
+                                    maxLength: { value: 4, message: "Postal code is too long" }
+                                })}
+                                error={!!errors.postalCode}
+                                helperText={errors.postalCode?.message}
+                            />
                         </Stack>
                     </Stack>
 

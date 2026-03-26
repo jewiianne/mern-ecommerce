@@ -191,17 +191,22 @@ export const AdminDashBoard = () => {
         <Grid gap={2} container flex={1} justifyContent={'center'} alignContent={"center"}>
             {
                 products.map((product)=>(
-                    <Stack>
+                    <Stack key={product._id} data-testid="admin-product-row">
                         <Stack sx={{opacity:product.isDeleted?.7:1}}>
-                            <ProductCard key={product._id} id={product._id} title={product.title} thumbnail={product.thumbnail} brand={product.brand.name} price={product.price} isAdminCard={true}/>
+                            <ProductCard id={product._id} title={product.title} thumbnail={product.thumbnail} brand={product.brand.name} price={product.price} isAdminCard={true}/>
                         </Stack>
                         <Stack paddingLeft={2} paddingRight={2} flexDirection={'row'} justifySelf={'flex-end'} alignSelf={'flex-end'} columnGap={is488?1:2}>
-                            <Button component={Link} to={`/admin/product-update/${product._id}`} variant='contained'>Update</Button>
+                            <Button data-testid={`update-product`} component={Link} to={`/admin/product-update/${product._id}`} variant='contained'>Update</Button>
                             {
                                 product.isDeleted===true?(
                                     <Button onClick={()=>handleProductUnDelete(product._id)} color='error' variant='outlined'>Un-delete</Button>
                                 ):(
-                                    <Button onClick={()=>handleProductDelete(product._id)} color='error' variant='outlined'>Delete</Button>
+                                    <Button
+                                    data-testid={`delete-product`}
+                                    onClick={()=>handleProductDelete(product._id)}
+                                    >
+                                    Delete
+                                    </Button>
                                 )
                             }
                         </Stack>

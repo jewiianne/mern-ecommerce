@@ -47,7 +47,7 @@ export const ProductCard = ({id,title,price,thumbnail,brand,stockQuantity,handle
     {
 
     isProductAlreadyinWishlist!==-1 ?
-    <Stack component={isAdminCard?"":isWishlistCard?"":is408?'':Paper} mt={is408?2:0} elevation={1} p={2} width={is408?'auto':is488?"200px":is608?"240px":is752?"300px":is932?'240px':is1410?'300px':'340px'} sx={{cursor:"pointer"}} onClick={()=>navigate(`/product-details/${id}`)}>
+    <Stack data-testid="product-card" component={isAdminCard?"":isWishlistCard?"":is408?'':Paper} mt={is408?2:0} elevation={1} p={2} width={is408?'auto':is488?"200px":is608?"240px":is752?"300px":is932?'240px':is1410?'300px':'340px'} sx={{cursor:"pointer"}} onClick={()=>navigate(`/product-details/${id}`)}>
 
         {/* image display */}
         <Stack>
@@ -67,7 +67,7 @@ export const ProductCard = ({id,title,price,thumbnail,brand,stockQuantity,handle
                     </motion.div>
                     }
                 </Stack>
-                <Typography color={"text.secondary"}>{brand}</Typography>
+                <Typography data-testid="product-card-brand" color={"text.secondary"}>{brand}</Typography>
             </Stack>
 
             <Stack sx={{flexDirection:"row",justifyContent:"space-between",alignItems:"center"}}>
@@ -77,7 +77,7 @@ export const ProductCard = ({id,title,price,thumbnail,brand,stockQuantity,handle
                     'Added to cart'
                     :
                     !isAdminCard &&
-                    <motion.button  whileHover={{scale:1.030}} whileTap={{scale:1}} onClick={(e)=>handleAddToCart(e)} style={{padding:"10px 15px",borderRadius:"3px",outline:"none",border:"none",cursor:"pointer",backgroundColor:"black",color:"white",fontSize:is408?'.9rem':is488?'.7rem':is500?'.8rem':'.9rem'}}>
+                    <motion.button data-testid="add-to-cart-btn" whileHover={{scale:1.030}} whileTap={{scale:1}} onClick={(e)=>handleAddToCart(e)} style={{padding:"10px 15px",borderRadius:"3px",outline:"none",border:"none",cursor:"pointer",backgroundColor:"black",color:"white",fontSize:is408?'.9rem':is488?'.7rem':is500?'.8rem':'.9rem'}}>
                         <div style={{display:"flex",alignItems:"center",columnGap:".5rem"}}>
                             <p>Add To Cart</p>
                         </div>
