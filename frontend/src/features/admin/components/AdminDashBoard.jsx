@@ -201,7 +201,12 @@ export const AdminDashBoard = () => {
                                 product.isDeleted===true?(
                                     <Button onClick={()=>handleProductUnDelete(product._id)} color='error' variant='outlined'>Un-delete</Button>
                                 ):(
-                                    <Button onClick={()=>handleProductDelete(product._id)} color='error' variant='outlined'>Delete</Button>
+                                    <Button
+                                    data-testid={`delete-${product._id}`}
+                                    onClick={()=>handleProductDelete(product._id)}
+                                    >
+                                    Delete
+                                    </Button>
                                 )
                             }
                         </Stack>

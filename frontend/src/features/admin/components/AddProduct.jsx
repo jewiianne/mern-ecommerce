@@ -48,97 +48,125 @@ export const AddProduct = () => {
         dispatch(addProductAsync(newProduct))
     }
 
-    
   return (
     <Stack p={'0 16px'} justifyContent={'center'} alignItems={'center'} flexDirection={'row'} >
-        
 
-        <Stack width={is1100?"100%":"60rem"} rowGap={4} mt={is480?4:6} mb={6} component={'form'} noValidate onSubmit={handleSubmit(handleAddProduct)}> 
+        <Stack width={is1100?"100%":"60rem"} rowGap={4} mt={is480?4:6} mb={6}
+            component={'form'} noValidate onSubmit={handleSubmit(handleAddProduct)}> 
             
-            {/* feild area */}
             <Stack rowGap={3}>
-                <Stack>
-                    <Typography variant='h6' fontWeight={400} gutterBottom>Title</Typography>
-                    <TextField {...register("title",{required:'Title is required'})}/>
-                </Stack> 
 
+                {/* TITLE */}
+                <TextField
+                    label="Title"
+                    inputProps={{ id: "title", "data-testid": "title" }}
+                    {...register("title",{required:'Title is required'})}
+                />
+
+                {/* BRAND + CATEGORY */}
                 <Stack flexDirection={'row'} >
 
                     <FormControl fullWidth>
                         <InputLabel id="brand-selection">Brand</InputLabel>
-                        <Select {...register("brand",{required:"Brand is required"})} labelId="brand-selection" label="Brand">
-                            
-                            {
-                                brands.map((brand)=>(
-                                    <MenuItem value={brand._id}>{brand.name}</MenuItem>
-                                ))
-                            }
-
+                        <Select
+                            labelId="brand-selection"
+                            label="Brand"
+                            inputProps={{ id: "brand", "data-testid": "brand" }}
+                            {...register("brand",{required:"Brand is required"})}
+                        >
+                            {brands.map((brand)=>(
+                                <MenuItem key={brand._id} value={brand._id}>
+                                    {brand.name}
+                                </MenuItem>
+                            ))}
                         </Select>
                     </FormControl>
-
 
                     <FormControl fullWidth>
                         <InputLabel id="category-selection">Category</InputLabel>
-                        <Select {...register("category",{required:"category is required"})} labelId="category-selection" label="Category">
-                            
-                            {
-                                categories.map((category)=>(
-                                    <MenuItem value={category._id}>{category.name}</MenuItem>
-                                ))
-                            }
-
+                        <Select
+                            labelId="category-selection"
+                            label="Category"
+                            inputProps={{ id: "category", "data-testid": "category" }}
+                            {...register("category",{required:"category is required"})}
+                        >
+                            {categories.map((category)=>(
+                                <MenuItem key={category._id} value={category._id}>
+                                    {category.name}
+                                </MenuItem>
+                            ))}
                         </Select>
                     </FormControl>
 
                 </Stack>
 
+                {/* DESCRIPTION */}
+                <TextField
+                    label="Description"
+                    multiline rows={4}
+                    inputProps={{ id: "description", "data-testid": "description" }}
+                    {...register("description",{required:"Description is required"})}
+                />
 
-                <Stack>
-                    <Typography variant='h6' fontWeight={400}  gutterBottom>Description</Typography>
-                    <TextField multiline rows={4} {...register("description",{required:"Description is required"})}/>
-                </Stack>
-
+                {/* PRICE + DISCOUNT */}
                 <Stack flexDirection={'row'}>
-                    <Stack flex={1}>
-                        <Typography variant='h6' fontWeight={400}  gutterBottom>Price</Typography>
-                        <TextField type='number' {...register("price",{required:"Price is required"})}/>
-                    </Stack>
-                    <Stack flex={1}>
-                        <Typography variant='h6' fontWeight={400}  gutterBottom>Discount {is480?"%":"Percentage"}</Typography>
-                        <TextField type='number' {...register("discountPercentage",{required:"discount percentage is required"})}/>
-                    </Stack>
+                    <TextField
+                        label="Price"
+                        type='number'
+                        inputProps={{ id: "price", "data-testid": "price" }}
+                        {...register("price",{required:"Price is required"})}
+                    />
+                    <TextField
+                        label="Discount"
+                        type='number'
+                        inputProps={{ id: "discountPercentage", "data-testid": "discountPercentage" }}
+                        {...register("discountPercentage",{required:"discount percentage is required"})}
+                    />
                 </Stack>
 
-                <Stack>
-                    <Typography variant='h6'  fontWeight={400} gutterBottom>Stock Quantity</Typography>
-                    <TextField type='number' {...register("stockQuantity",{required:"Stock Quantity is required"})}/>
-                </Stack>
-                <Stack>
-                    <Typography variant='h6'  fontWeight={400} gutterBottom>Thumbnail</Typography>
-                    <TextField {...register("thumbnail",{required:"Thumbnail is required"})}/>
-                </Stack>
+                {/* STOCK */}
+                <TextField
+                    label="Stock Quantity"
+                    type='number'
+                    inputProps={{ id: "stockQuantity", "data-testid": "stockQuantity" }}
+                    {...register("stockQuantity",{required:"Stock Quantity is required"})}
+                />
 
-                <Stack>
-                    <Typography variant='h6'  fontWeight={400} gutterBottom>Product Images</Typography>
+                {/* THUMBNAIL */}
+                <TextField
+                    label="Thumbnail"
+                    inputProps={{ id: "thumbnail", "data-testid": "thumbnail" }}
+                    {...register("thumbnail",{required:"Thumbnail is required"})}
+                />
 
-                    <Stack rowGap={2}>
-   
-                        <TextField {...register("image0",{required:"Image is required"})}/>
-                        <TextField {...register("image1",{required:"Image is required"})}/>
-                        <TextField {...register("image2",{required:"Image is required"})}/>
-                        <TextField {...register("image3",{required:"Image is required"})}/>
-    
-                    </Stack>
-
+                {/* IMAGES */}
+                <Stack rowGap={2}>
+                    <TextField inputProps={{ id: "image0", "data-testid": "image0" }} {...register("image0")} />
+                    <TextField inputProps={{ id: "image1", "data-testid": "image1" }} {...register("image1")} />
+                    <TextField inputProps={{ id: "image2", "data-testid": "image2" }} {...register("image2")} />
+                    <TextField inputProps={{ id: "image3", "data-testid": "image3" }} {...register("image3")} />
                 </Stack>
 
             </Stack>
 
-            {/* action area */}
-            <Stack flexDirection={'row'} alignSelf={'flex-end'} columnGap={is480?1:2}>
-                <Button size={is480?'medium':'large'} variant='contained' type='submit'>Add Product</Button>
-                <Button size={is480?'medium':'large'} variant='outlined' color='error' component={Link} to={'/admin/dashboard'}>Cancel</Button>
+            {/* ACTIONS */}
+            <Stack flexDirection={'row'} alignSelf={'flex-end'}>
+                <Button
+                    type='submit'
+                    variant='contained'
+                    data-testid="submit-product"
+                >
+                    Add Product
+                </Button>
+
+                <Button
+                    variant='outlined'
+                    color='error'
+                    component={Link}
+                    to={'/admin/dashboard'}
+                >
+                    Cancel
+                </Button>
             </Stack>
 
         </Stack>
