@@ -90,7 +90,7 @@ export const Navbar=({isProductList=false})=> {
               {
                 loggedInUser?.isAdmin && 
               
-                <MenuItem  onClick={handleCloseUserMenu}>
+                <MenuItem data-testid="add-new-product" onClick={handleCloseUserMenu}>
                   <Typography component={Link} color={'text.primary'} sx={{textDecoration:"none"}} to="/admin/add-product" textAlign="center">Add new Product</Typography>
                 </MenuItem>
               

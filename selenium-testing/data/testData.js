@@ -33,6 +33,25 @@ module.exports = {
         testAddSecondProduct: 'Samsung Universe 9',
         testAddProducts: ['Samsung Galaxy Book', 'Samsung Universe 9'],
         testRemoveProduct: 'Samsung Universe 9',
+        testDeleteProduct: 'iPhone 9',
+        testAddNewProduct: {
+            title: 'iPhone 10 Pro Max',
+            desc: 'An apple mobile which is nothing like apple',
+            brand: 'Apple',
+            category: 'smartphones',
+            price: 1279,
+            discount: 5.96,
+            stock: 14,
+            thumb: 'https://cdn.dummyjson.com/product-images/1/thumbnail.jpg',
+            images: [
+                "https://cdn.dummyjson.com/product-images/1/1.jpg",
+                "https://cdn.dummyjson.com/product-images/1/2.jpg",
+                "https://cdn.dummyjson.com/product-images/1/3.jpg",
+                "https://cdn.dummyjson.com/product-images/1/4.jpg",
+                "https://cdn.dummyjson.com/product-images/1/thumbnail.jpg"
+            ]
+        },
+        testUpdateProduct: 'iPhone 10 Pro Max Ultra Extravaganza',
         productFilter:'Samsung',
         productFilters:['Samsung', 'Apple', 'OPPO']
     },
@@ -70,6 +89,7 @@ module.exports = {
         invalidLogin: 'Invalid Credentails',
         loginSuccess: 'Login successful',
         emptyEmail: 'Email is required',
-        emptyPassword: 'Password is required'
+        emptyPassword: 'Password is required',
+        updateProduct: 'Product Updated'
     }
 };

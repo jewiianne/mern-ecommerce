@@ -1,4 +1,4 @@
-const { urls, credentials, selectors, messages} = require('../data/testData.js');
+const { urls, credentials, selectors, messages, product} = require('../data/testData.js');
 const { Builder, By, until, Key } = require('selenium-webdriver'); // ✅ added Key
 const assert = require('assert');
 
@@ -40,214 +40,222 @@ async function testAdminLogin(driver) {
     }
 }
 
-async function addProduct(driver) {
+async function testDeleteProduct(driver, productTitle) {
     try {
-        await driver.get('http://localhost:3000/admin/dashboard');
+        console.log(`--- ATTEMPT: Deleting Product: "${productTitle}" ---`);
+        
+        await driver.get(urls.adminDashboard);
 
-        // Navigate
-        await driver.findElement(By.css("div.MuiAvatar-root")).click();
-        const addLink = await driver.wait(
-            until.elementLocated(By.xpath("//a[contains(., 'Add new Product')]")), 
-            10000
+        const productRowXpath = `//div[@data-testid="admin-product-row"][descendant::*[normalize-space()="${productTitle}"]]`;
+        
+        const row = await driver.wait(
+            until.elementLocated(By.xpath(productRowXpath)), 
+            10000,
+            `Could not find admin row for: ${productTitle}`
         );
-        await driver.executeScript("arguments[0].click();", addLink);
-        await driver.wait(until.urlContains('/admin/add-product'), 10000);
-        console.log("Adding Product...");
 
-        // Wait for form to load
-        await driver.wait(until.elementLocated(By.id('title')), 15000);
+        const deleteBtn = await row.findElement(By.css("[data-testid='delete-product']"));
+        
+        await driver.executeScript("arguments[0].scrollIntoView({block: 'center'});", deleteBtn);
+        await driver.sleep(500); 
+        await deleteBtn.click();
 
-        async function fillForm(id, value) {
-            const element = await driver.wait(until.elementLocated(By.id(id)), 10000);
-            await driver.executeScript("arguments[0].scrollIntoView({block:'center'});", el);
-            await driver.wait(until.elementIsVisible(el), 5000);
-            await element.clear();
-            await element.sendKeys(value);
-        }
+        const unDeleteBtn = await driver.wait(
+            until.elementLocated(By.xpath(`${productRowXpath}//button[contains(., 'Un-delete')]`)), 
+            8000,
+            "ASSERTION FAILED: 'Un-delete' button did not appear."
+        );
 
-        // Fill form
-        await fillForm('title', 'Selenium Product');
-        await fillForm('description', 'Test description');
-        await fillForm('price', '299');
-        await fillForm('discountPercentage', '10');
-        await fillForm('stockQuantity', '50');
-        await fillForm('thumbnail', 'https://sample.photos');
-        await fillForm('image0', 'https://sample.photos');
+        console.log(`ASSERTION PASSED: "${productTitle}" deleted successfully.`);
 
-        // MUI dropdowns
-        async function selectMUI(testId) {
-            const dropdown = await driver.wait(until.elementLocated(By.css(`[data-testid="${testId}"]`)), 10000);
-            await driver.executeScript("arguments[0].scrollIntoView({block:'center'});", dropdown);
-            await driver.sleep(500);
-            await driver.executeScript("arguments[0].parentElement.click();", dropdown);
-
-            const option = await driver.wait(until.elementLocated(By.css('li.MuiMenuItem-root')), 5000);
-            await driver.executeScript("arguments[0].click();", option);
-        }
-        await selectMUI("brand");
-        await selectMUI("category");
-
-        // Submit
-        await driver.findElement(By.xpath("//button[@type='submit']")).click();
-
-        // Wait for toast OR redirect (30s)
-        const timeout = 30000;
-        const interval = 500;
-        let success = false;
-        const start = Date.now();
-
-        while ((Date.now() - start) < timeout && !success) {
-            try {
-                const toast = await driver.findElement(By.className('Toastify__toast-body'));
-                const text = await toast.getText();
-                console.log("DEBUG TOAST:", text);
-                if (text.toLowerCase().includes("product")) {
-                    success = true;
-                    break;
-                }
-            } catch {}
-
-            try {
-                const currentUrl = await driver.getCurrentUrl();
-                if (currentUrl === urls.adminDashboard) {
-                    console.log("Add product success");
-                    success = true;
-                    break;
-                }
-            } catch {}
-
-            await driver.sleep(interval);
-        }
-
-        assert.ok(success, "Add product failed");
     } catch (error) {
-        console.error("ADD PRODUCT FAILED:");
-        console.error(error.message);
+        console.error("DELETE PRODUCT TEST FAILED:", error.message);
+        throw error;
     }
 }
 
-async function updateProduct(driver) {
-    try {
-        await driver.get('http://localhost:3000/admin/dashboard');
+async function testAddNewProduct(driver) {
+    const data = product.testAddNewProduct;
 
-        const editButtons = await driver.wait(
-            until.elementsLocated(By.xpath("//a[contains(@href, 'product-update')]")),
+    try {
+        console.log("--- ATTEMPT: Adding new product ---");
+        await driver.get(urls.adminDashboard);
+
+        const menuButton = await driver.wait(until.elementLocated(By.css("button[aria-label='Open settings']")), 5000);
+        await menuButton.click();
+
+        const addNewLink = await driver.wait(until.elementLocated(By.xpath("//a[contains(@href, '/admin/add-product')]")), 5000);
+        await addNewLink.click();
+
+        await driver.wait(until.elementLocated(By.id("title")), 5000).sendKeys(data.title);
+        await driver.findElement(By.id("description")).sendKeys(data.desc);
+        await driver.findElement(By.id("price")).sendKeys(data.price.toString());
+        await driver.findElement(By.id("discountPercentage")).sendKeys(data.discount.toString());
+        await driver.findElement(By.id("stockQuantity")).sendKeys(data.stock.toString());
+        await driver.findElement(By.id("thumbnail")).sendKeys(data.thumb);
+
+        for (let i = 0; i < data.images.length && i < 4; i++) {
+            await driver.findElement(By.id(`image${i}`)).sendKeys(data.images[i]);
+        }
+
+        const brandInput = await driver.wait(until.elementLocated(By.id("brand")), 5000);
+        const brandTrigger = await brandInput.findElement(By.xpath("./..")); 
+
+        await driver.actions().move({origin: brandTrigger}).click().perform();
+
+        await driver.wait(until.elementLocated(By.xpath("//div[contains(@class, 'MuiPaper-root')]//ul[@role='listbox']")), 8000);
+
+        const brandOption = await driver.wait(
+            until.elementLocated(By.xpath(`//li[@role="option" and contains(., "${data.brand}")]`)), 
+            5000
+        );
+        await brandOption.click();
+
+        await driver.sleep(1000); 
+
+        const categoryInput = await driver.findElement(By.id("category"));
+        const categoryTrigger = await categoryInput.findElement(By.xpath("./.."));
+
+        await driver.actions().move({origin: categoryTrigger}).click().perform();
+
+        await driver.wait(until.elementLocated(By.xpath("//div[contains(@class, 'MuiPaper-root')]//ul[@role='listbox']")), 8000);
+
+        const categoryOption = await driver.wait(
+            until.elementLocated(By.xpath(`//li[@role="option" and contains(., "${data.category}")]`)), 
+            5000
+        );
+        await categoryOption.click();
+
+        const submitBtn = await driver.findElement(By.css("[data-testid='submit-product']"));
+        await submitBtn.click();
+
+        await driver.wait(until.urlContains('/admin/dashboard'), 10000);
+        console.log(`ASSERTION PASSED: Product "${data.title}" added successfully.`);
+
+    } catch (error) {
+        console.error("ADD PRODUCT FAILED:", error.message);
+        throw error;
+    }
+}
+
+async function testUpdateProductName(driver, productTitle, expectedBrand) {
+    try {
+        console.log(`--- ATTEMPT: Updating Name for "${productTitle}" ---`);
+        await driver.get(urls.adminDashboard);
+
+        await filterProducts(driver, expectedBrand);
+
+        const productRows = await driver.wait(
+            until.elementsLocated(By.css('[data-testid="admin-product-row"]')), 
             10000
         );
+        
+        let targetRow = null;
 
-        // click last product
-        await driver.executeScript("arguments[0].click();", editButtons[editButtons.length - 1]);
+        for (let currentRow of productRows) {
+            const text = await currentRow.getText();
+            if (text.includes(productTitle)) {
+                targetRow = currentRow; 
+                break;
+            }
+        }
+
+        if (!targetRow) {
+            throw new Error(`Could not find product with title "${productTitle}" on dashboard.`);
+        }
+        
+        await driver.sleep(500); 
+        const updateBtn = await targetRow.findElement(By.css("[data-testid='update-product']"));
+        await driver.executeScript("arguments[0].scrollIntoView({block: 'center'});", updateBtn);
+        await driver.sleep(500); 
+        await updateBtn.click();
 
         await driver.wait(until.urlContains('/admin/product-update'), 10000);
 
-        async function updateField(name, value) {
-            const input = await driver.wait(until.elementLocated(By.name(name)), 10000);
+        async function updateFieldByLabel(labelTitle, value) {
+            const xpath = `//h6[normalize-space()="${labelTitle}"]/following-sibling::div//input | //h6[normalize-space()="${labelTitle}"]/parent::div//input`;
+            const input = await driver.wait(until.elementLocated(By.xpath(xpath)), 10000);
+            
             await input.click();
             await input.sendKeys(Key.CONTROL, "a");
             await input.sendKeys(Key.BACK_SPACE);
             await input.sendKeys(value);
         }
 
-        await updateField('title', 'Updated Product');
-        await updateField('price', '350');
+        console.log(`Setting new title to: ${product.testUpdateProduct}`);
+        await updateFieldByLabel('Title', product.testUpdateProduct);
 
-        const submitBtn = await driver.findElement(By.xpath("//button[@type='submit']"));
+        const submitBtn = await driver.wait(until.elementLocated(By.css("[data-testid='submit-product']")), 5000);
         await submitBtn.click();
 
-        // toast OR redirect
-        let success = false;
+        const toastElement = await driver.wait(
+            until.elementLocated(By.css(selectors.toastMessage)), 
+            5000 
+        );
 
-        try {
-            const toast = await driver.wait(
-                until.elementLocated(By.className('Toastify__toast-body')),
-                5000
-            );
-            const text = await toast.getText();
-            console.log("UPDATE RESULT:", text);
+        await driver.wait(until.elementIsVisible(toastElement), 5000);
 
-            if (text.toLowerCase().includes("updated")) {
-                success = true;
-            }
-        } catch {}
+        const alertText = await toastElement.getText();
+        console.log("TOAST DETECTED:", alertText);
 
-        if (!success) {
-            await driver.wait(until.urlContains('/admin/dashboard'), 10000);
-            success = true;
-        }
+        assert.strictEqual(alertText, messages.updateProduct, `EXPECTED: "${messages.updateProduct}", GOT: "${alertText}"`);
 
-        assert.ok(success, "Update failed");
-        console.log("Product updated");
+        await driver.wait(until.urlContains('/admin/dashboard'), 10000);
+        
+        await driver.sleep(500); 
+        await filterProducts(driver, expectedBrand);
+        
+        await driver.wait(
+            until.elementLocated(By.xpath(`//*[normalize-space()="${product.testUpdateProduct}"]`)), 
+            5000,
+            `ASSERTION FAILED: New title "${product.testUpdateProduct}" not found on dashboard.`
+        );
+        console.log(`ASSERTION PASSED: Product name changed to "${product.testUpdateProduct}"`);
 
     } catch (error) {
-        console.error("UPDATE PRODUCT FAILED:");
-        console.error(error.message);
+        console.error("UPDATE PRODUCT FAILED:", error.message);
+        throw error;
     }
 }
 
-async function deleteProduct(driver) {
-    try {
-        console.log("--- DELETE TEST ---");
-        await driver.get('http://localhost:3000/admin/dashboard');
+async function filterProducts(driver, expectedBrand){
+    const filterBtn = await driver.wait(
+            until.elementLocated(By.css('[data-testid="filter-toggle-button"]')), 
+            10000
+        );
+        await filterBtn.click();
 
-        // Retry loop to find products
-        const timeout = 20000;
-        const interval = 500;
-        let deleteBtn = null;
-        const start = Date.now();
-
-        while ((Date.now() - start) < timeout && !deleteBtn) {
-            try {
-                const buttons = await driver.findElements(By.css('[data-testid^="delete-"]'));
-                if (buttons.length > 0) {
-                    deleteBtn = buttons[0];
-                    break;
-                }
-            } catch {}
-            await driver.sleep(interval);
+        const brandAccordion = await driver.wait(until.elementLocated(By.id("brand-filters")), 10000);
+        const isExpanded = await brandAccordion.getAttribute("aria-expanded");
+        if (isExpanded !== "true") {
+            await brandAccordion.click();
+            await driver.sleep(500); 
         }
 
-        if (!deleteBtn) throw new Error("No delete button found after 20s");
+        const label = await driver.wait(
+            until.elementLocated(By.xpath(`//label[.//span[text()="${expectedBrand}"]]`)), 
+            10000
+        );
+        const checkbox = await label.findElement(By.css("input[type='checkbox']"));
+        await driver.executeScript("arguments[0].click();", checkbox);
 
-        await driver.executeScript("arguments[0].scrollIntoView({block:'center'});", deleteBtn);
-        await driver.executeScript("arguments[0].click();", deleteBtn);
+        console.log("Applying filter... waiting for refresh...");
 
-        try {
-            const confirmBtn = await driver.wait(
-                until.elementLocated(By.xpath("//button[contains(., 'Delete') or contains(., 'Confirm')]")),
-                3000
-            );
-            await driver.executeScript("arguments[0].click();", confirmBtn);
-        } catch {}
-
-        // Toast
-        try {
-            const toast = await driver.wait(
-                until.elementLocated(By.className('Toastify__toast-body')),
-                5000
-            );
-            const text = await toast.getText();
-            console.log("DELETE RESULT:", text);
-        } catch {
-            console.log("No toast detected, delete may have succeeded silently.");
-        }
-
-        console.log("Deleted a product");
-    } catch (error) {
-        console.error("DELETE PRODUCT FAILED:");
-        console.error(error.message);
-    }
+        await filterBtn.click();
+        await driver.sleep(3000);
 }
 
-async function runAuthenticationTest() {
+async function runAdminTest() {
     let driver = await new Builder().forBrowser('chrome').build();
     try {
+        await driver.manage().window().maximize();
         await testAdminLogin(driver);
-        await addProduct(driver);
-        await updateProduct(driver);
-        await deleteProduct(driver);
+        await testDeleteProduct(driver, product.testDeleteProduct);
+        await testAddNewProduct(driver)
+        await testUpdateProductName(driver, product.testAddNewProduct.title, product.testAddNewProduct.brand);
     } finally {
         await driver.quit();
     }
 }
 
-runAuthenticationTest();
+runAdminTest();

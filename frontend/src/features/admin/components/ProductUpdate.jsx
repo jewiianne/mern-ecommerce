@@ -70,7 +70,7 @@ export const ProductUpdate = () => {
             <Stack rowGap={3}>
                 <Stack>
                     <Typography variant='h6' fontWeight={400} gutterBottom>Title</Typography>
-                    <TextField {...register("title",{required:'Title is required',value:selectedProduct.title})}/>
+                    <TextField {...register("title",{required:'Title is required',value:selectedProduct.title})} inputProps={{ "data-testid": "title" }}/>
                 </Stack> 
 
                 <Stack flexDirection={'row'} >
@@ -148,7 +148,7 @@ export const ProductUpdate = () => {
 
             {/* action area */}
             <Stack flexDirection={'row'} alignSelf={'flex-end'} columnGap={is480?1:2}>
-                <Button size={is480?'medium':'large'} variant='contained' type='submit'>Update</Button>
+                <Button size={is480?'medium':'large'} variant='contained' type='submit' data-testid="submit-product">Update</Button>
                 <Button size={is480?'medium':'large'} variant='outlined' color='error' component={Link} to={'/admin/dashboard'}>Cancel</Button>
             </Stack>
 
