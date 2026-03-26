@@ -50,7 +50,7 @@ async function addProduct(driver) {
         await driver.wait(until.urlContains('/admin/add-product'), 10000);
         console.log("On Add Product page.");
 
-        // ✅ Fill fields using ID (you must add IDs in React)
+        // Fill fields using ID (you must add IDs in React)
         await driver.wait(until.elementLocated(By.id('title')), 10000);
 
         await driver.findElement(By.id('title')).sendKeys('Selenium Product');
@@ -65,7 +65,7 @@ async function addProduct(driver) {
         await driver.findElement(By.id('image2')).sendKeys('https://picsum.photos/302');
         await driver.findElement(By.id('image3')).sendKeys('https://picsum.photos/303');
 
-        // ✅ MUI SELECT FIX
+        // MUI SELECT FIX
         await driver.findElement(By.id('brand')).click();
         let option = await driver.wait(until.elementLocated(By.css('li.MuiMenuItem-root')), 5000);
         await option.click();
@@ -77,7 +77,7 @@ async function addProduct(driver) {
         // Submit
         await driver.findElement(By.xpath("//button[@type='submit']")).click();
 
-        // ✅ Assertion
+        // Assertion
         const toast = await driver.wait(
             until.elementLocated(By.className('Toastify__toast-body')),
             10000
@@ -93,7 +93,7 @@ async function addProduct(driver) {
 
         await driver.wait(until.urlIs(urls.adminDashboard), 10000);
 
-        console.log("✅ Product added successfully");
+        console.log("Product added successfully");
 
     } catch (error) {
         console.error("ADD PRODUCT FAILED:", error.message);
@@ -159,7 +159,6 @@ async function deleteProduct(driver) {
         const target = deleteButtons[deleteButtons.length - 1];
         await target.click();
 
-        // confirm modal (if exists)
         try {
             const confirmBtn = await driver.wait(
                 until.elementLocated(By.xpath("//button[contains(., 'Delete') or contains(., 'Confirm')]")), 
@@ -168,7 +167,6 @@ async function deleteProduct(driver) {
             await confirmBtn.click();
         } catch {}
 
-        // ✅ safer toast handling
         try {
             const toast = await driver.wait(
                 until.elementLocated(By.className('Toastify__toast-body')),
@@ -184,10 +182,10 @@ async function deleteProduct(driver) {
             );
 
         } catch {
-            console.log("⚠️ No toast detected (might still be successful)");
+            console.log("No toast detected");
         }
 
-        console.log("✅ Delete step completed");
+        console.log("Delete step completed");
 
     } catch (error) {
         console.error("DELETE PRODUCT FAILED:", error.message);
