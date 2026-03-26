@@ -4,7 +4,7 @@ const assert = require('assert');
 
 async function testAdminLogin(driver) {
     try {
-        await driver.get('http://localhost:3000/login');
+        await driver.get(urls.login);
 
         await driver.findElement(By.name('email')).sendKeys(credentials.admin.email); 
         await driver.findElement(By.name('password')).sendKeys(credentials.admin.password);
@@ -42,7 +42,7 @@ async function testAdminLogin(driver) {
 
 async function testUserLogin(driver) {
     try {
-        await driver.get('http://localhost:3000/login');
+        await driver.get(urls.login);
 
         await driver.findElement(By.name('email')).sendKeys(credentials.standardUser.email); 
         await driver.findElement(By.name('password')).sendKeys(credentials.standardUser.password);
@@ -74,14 +74,33 @@ async function testUserLogin(driver) {
 
 async function testLogout(driver){
     try {
+        console.log("--- ATTEMPT: Test Logout User ---");
+
+        await driver.wait(async () => {
+            const url = await driver.getCurrentUrl();
+            return url === urls.home || url === urls.adminDashboard;
+        }, 10000, "Timed out waiting for Home or Admin Dashboard page");
+
+        const current = await driver.getCurrentUrl();
+
+        if (current === urls.adminDashboard) {
+            console.log("DETECTED: Admin Dashboard");
+            assert.strictEqual(current, urls.adminDashboard, "Logged in but Admin Dashboard URL mismatch.");
+        } else if (current === urls.home) {
+            console.log("DETECTED: User Home Page");
+            assert.strictEqual(current, urls.home, "Logged in but Home URL mismatch.");
+        } else {
+            assert.fail(`ERROR: Final URL '${current}' does not match Home or Dashboard`);
+        }
+
         const menuButton = await driver.wait(
-            until.elementLocated(By.css("button[class*='MuiButtonBase-root']")), 
+            until.elementLocated(By.css("button[aria-label='Open settings']")), 
             5000
         );
         await menuButton.click();
 
         const menuList = await driver.wait(
-            until.elementLocated(By.css("ul[class*='MuiList-root'][role='menu']")), 
+            until.elementLocated(By.css("ul[role='menu']")), 
             5000 
         );
         await driver.wait(until.elementIsVisible(menuList), 5000);
@@ -90,6 +109,7 @@ async function testLogout(driver){
             until.elementLocated(By.xpath("//a[contains(@href, '/logout')]")), 
             5000
         );
+        
         await logoutLink.click();
 
         await driver.wait(until.urlIs(urls.login), 10000);
@@ -97,11 +117,11 @@ async function testLogout(driver){
         
         assert.strictEqual(currentUrl, urls.login, 'ERROR: Final URL does not match the Login Page');
 
-        const cookies = await driver.manage().getCookies();
-        const tokenCookie = cookies.find(c => c.name === 'token'); // Change 'token' to your cookie name
-        assert.strictEqual(tokenCookie, undefined, 'ERROR: Auth token still exists in cookies!');
+        const token = await driver.executeScript("return window.localStorage.getItem('token');");
+        assert.strictEqual(token, null, 'ERROR: Token still in localStorage!');
 
-        console.log("ASSERTION PASSED: Logout user successfully.");
+        console.log("ASSERTION PASSED: Logout successful and session cleared.");
+
     } catch (error) {
         console.error("TEST FAILED:", error.message);
     }
@@ -109,7 +129,7 @@ async function testLogout(driver){
 
 async function testInvalidLogin(driver) {
     try {
-        await driver.get('http://localhost:3000/login');
+        await driver.get(urls.login);
 
         await driver.findElement(By.name('email')).sendKeys(credentials.invalidUser.email); 
         await driver.findElement(By.name('password')).sendKeys(credentials.invalidUser.password);
@@ -136,7 +156,7 @@ async function testInvalidLogin(driver) {
 
 async function testEmptyLogin(driver) {
     try {
-        await driver.get('http://localhost:3000/login');
+        await driver.get(urls.login);
 
         await driver.findElement(By.name('email')).sendKeys(""); 
         await driver.findElement(By.name('password')).sendKeys("");
@@ -174,6 +194,7 @@ async function testEmptyLogin(driver) {
 async function runAuthenticationTest() {
     let driver = await new Builder().forBrowser('chrome').build();
     try {
+        await driver.manage().window().maximize();
         await testAdminLogin(driver);
         await testLogout(driver);
         await driver.manage().deleteAllCookies();

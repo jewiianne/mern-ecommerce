@@ -5,7 +5,9 @@ module.exports = {
         home: `${BASE_URL}/`,
         login: `${BASE_URL}/login`,
         cart: `${BASE_URL}/cart`,
+        checkout: `${BASE_URL}/checkout`,
         adminDashboard: `${BASE_URL}/admin/dashboard`,
+        orders: `${BASE_URL}/orders`,
         addProduct: `${BASE_URL}/admin/add-product`,
     },
 
@@ -26,15 +28,38 @@ module.exports = {
         }
     },
 
-    products: {
-        validSearch: 'VHS',
-        nonExistent: 'ZXY123-Empty-Product',
-        newProduct: {
-            name: 'Retro 80s VHS Tape',
-            price: 250,
-            description: 'A classic blank tape for your simulator store.',
-            stock: 50
+    product: {
+        testAddProduct: 'Samsung Galaxy Book',
+        testAddSecondProduct: 'Samsung Universe 9',
+        testAddProducts: ['Samsung Galaxy Book', 'Samsung Universe 9'],
+        testRemoveProduct: 'Samsung Universe 9',
+        productFilter:'Samsung',
+        productFilters:['Samsung', 'Apple', 'OPPO']
+    },
+
+    address:{
+        valid:{
+            type: 'Home',
+            street: 'New York Avenue',
+            country: 'Philippines',
+            phone: '09861078663',
+            city: 'Quezon City',
+            state: 'Metro Manila',
+            postal: '1008'
+        },
+        invalid:{
+            type: 'hi',
+            street: 'st',
+            country: 'ph',
+            phone: '1',
+            city: 'c17y',
+            state: 'st',
+            postal: '1'
         }
+    },
+
+    payment: {
+        method: 'Cash',
     },
 
     selectors: {
